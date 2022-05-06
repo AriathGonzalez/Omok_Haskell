@@ -28,12 +28,8 @@ module Board where
 
     -- Return column at indicated x-index.
     col :: Int -> [[Int]] -> [Int]
-    -- Idx takes in x and row, effectively traversing each row until position of column reached. 
-    col x bd = [idx x h | h <- bd]
-        where idx y (h : t)
-                | y == 1 = h
-                | otherwise = idx (y - 1) t
-
+    col x bd = [(row n bd) !! (x - 1) | n <- [1 .. size bd]]
+        
     -- Return diagonal at indicated (x, y) place.
     diagonal :: Int -> Int -> [[Int]] -> [Int]
     diagonal x y bd
@@ -45,8 +41,8 @@ module Board where
     -- Mark a place (x, y) in a board by a player p.
     mark :: Int -> Int -> [[Int]] -> Int -> [[Int]]
     mark x y (h : t) p
-        | x == 1 = (markRow y h p) : t
-        | otherwise = h : mark (x - 1) y t p
+        | y == 1 = (markRow x h p) : t
+        | otherwise = h : mark x (y - 1) t p
 
     -- Place stone at the given row/col.
     markRow :: Int -> [Int] -> Int -> [Int]
@@ -56,7 +52,7 @@ module Board where
 
     -- Check if a place (x, y) of a board bd is unmarked.
     isEmpty :: Int -> Int -> [[Int]] -> Bool
-    isEmpty x y bd = if ((row x bd) !! (y - 1)) == 0 then True else False
+    isEmpty x y bd = if ((row y bd) !! (x - 1)) == 0 then True else False
 
     -- Check if a place (x, y) of a board bd have a stone placed.
     isMarked :: Int -> Int -> [[Int]] -> Bool
@@ -64,11 +60,11 @@ module Board where
 
     -- Check if a place (x, y) of a board bd have a stone placed by a player p.
     isMarkedBy :: Int -> Int -> [[Int]] -> Int -> Bool
-    isMarkedBy x y bd p = if ((row x bd) !! (y - 1)) == p then True else False
+    isMarkedBy x y bd p = if ((row y bd) !! (x - 1)) == p then True else False
 
     -- Return the player of the stone placed on a place (x, y) of a board bd. (Assuming not empty)
     marker :: Int -> Int -> [[Int]] -> Int
-    marker x y bd = (row x bd) !! (y - 1)
+    marker x y bd = (row y bd) !! (x - 1)
 
     -- Determining the game outcomes. --
 
@@ -100,11 +96,7 @@ module Board where
 
     -- Check if the game ended.
     isGameOver :: [[Int]] -> Bool
-    isGameOver bd
-        | isWonBy bd mkPlayer = True
-        | isWonBy bd mkOpponent = True
-        | isDraw bd = True
-        | otherwise = False
+    isGameOver bd = isWonBy bd mkPlayer || isWonBy bd mkOpponent || isDraw bd
 
     -- Return a string representation of a board bd.
     boardToStr :: (Int -> Char) -> [[Int]] -> String

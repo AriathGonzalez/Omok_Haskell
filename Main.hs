@@ -1,6 +1,6 @@
 -- Ariath S Gonzalez
 module Main where
-
+    
     import Board
     import System.IO
 
@@ -62,6 +62,10 @@ module Main where
             putStrLn (boardToStr playerToChar ackMove)
             if isWonBy ackMove mkPlayer then do
                 putStrLn "O has Won!"
+                return ()
+            -- Check draw.
+            else if isDraw ackMove then do
+                putStrLn "Draw!"
                 return ()
             else do
                 -- Player 2. 
